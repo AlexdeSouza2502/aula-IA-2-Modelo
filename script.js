@@ -28,10 +28,10 @@
         // append elements to the DOM
         document.getElementById("webcam-container").appendChild(webcam.canvas);
         labelContainer = document.getElementById("label-container");
-        for (let i = 0; i < maxPredictions; i++) { // and class labels
+        // for (let i = 0; i < maxPredictions; i++) { // and class labels
             labelContainer.appendChild(document.createElement("div"));
         }
-    }
+    
 
     async function loop() {
         webcam.update(); // update the webcam frame
@@ -43,9 +43,16 @@
     async function predict() {
         // predict can take in an image, video or canvas html element
         const prediction = await model.predict(webcam.canvas);
+        console.log(prediction);
+        let maxProb = 0;
+        let maxName = "";
         for (let i = 0; i < maxPredictions; i++) {
-            const classPrediction =
-                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-            labelContainer.childNodes[i].innerHTML = classPrediction;
+           if(prediction[i].probability> maxProb){
+            maxProb = prediction[i].probability;
+            maxName = prediction[i].className;
+           }
         }
+        const classPrediction =
+        maxName + ": " + maxProb.toFixed(2);
+    labelContainer.childNodes[0].innerHTML = classPrediction;
     }
